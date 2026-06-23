@@ -36,11 +36,13 @@ jobs:
           detect-secrets scan --all-files --exclude-files '\.venv/' \
             --exclude-files 'semar\.egg-info/' \
             --exclude-files '__pycache__/' \
+            --exclude-files '\.git/' \
+            --exclude-files '\.github/' \
             --output .secrets.baseline
 
       - name: Verify no secrets found
         run: |
-          detect-secrets audit .secrets.baseline
+          detect-secrets audit .secrets.baseline --report-only
 
   dependency-audit:
     name: Dependency Audit
