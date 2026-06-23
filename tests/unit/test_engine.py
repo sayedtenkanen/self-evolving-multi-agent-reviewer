@@ -48,6 +48,22 @@ class TestEngine:
         assert "metrics" in result
 
     @pytest.mark.asyncio
+    async def test_review_pr_adds_engine_metrics(self):
+        from semar.engine import Engine
+
+        engine = Engine()
+        result = await engine.review_pr(
+            pr_url="https://github.com/test/repo/pull/1",
+            pr_diff="+def foo(): pass",
+            pr_metadata={"files": ["test.py"]},
+        )
+        metrics = result["metrics"]
+        assert metrics["review_count"] == 1
+        assert "duration_ms" in metrics
+        assert isinstance(metrics["duration_ms"], (int, float))
+        assert metrics["duration_ms"] >= 0
+
+    @pytest.mark.asyncio
     async def test_review_pr_stores_trajectory(self):
         from semar.engine import Engine
 
@@ -197,6 +213,39 @@ class TestEngineWithAgents:
         )
         assert result["verdict"] in ("approve", "request_changes")
 
+    @pytest.mark.asyncio
+    async def test_review_pr_preserves_agent_metrics(self):
+        from semar.engine import Engine
+
+        engine = Engine()
+
+        class MockAgent:
+            async def execute_cycle(self, ctx):
+                from semar.agents.base_agent import AgentResult
+
+                return AgentResult(
+                    review="approve",
+                    suggestions=[],
+                    metrics={"accuracy": 0.9},
+                    trajectory={},
+                    agent_id="mock",
+                    language="python",
+                    pr_url=ctx.pr_url,
+                )
+
+        engine.register_agent("python", MockAgent())
+        result = await engine.review_pr(
+            pr_url="https://github.com/test/repo/pull/1",
+            pr_diff="+import os",
+            pr_metadata={"files": ["test.py"]},
+        )
+        # Agent metrics are preserved in per-language results
+        lang_results = result.get("results", [])
+        assert len(lang_results) > 0
+        assert lang_results[0]["metrics"]["accuracy"] == 0.9
+        # Engine metrics are added at top level
+        assert result["metrics"]["review_count"] == 1
+
 
 # ============================================================
 # Engine Self-Improvement Integration
@@ -268,3 +317,45 @@ class TestEngineSelfImprovement:
             pr_metadata={"files": ["test.py"]},
         )
         assert engine._weight_update_count >= 1
+
+    @pytest.mark.asyncio
+    async def test_both_updates_on_same_cycle(self):
+        from semar.engine import Engine
+
+        # Both intervals = 1, so both should fire on every review
+        engine = Engine(harness_update_interval=1, weight_update_interval=1)
+        await engine.review_pr(
+            pr_url="https://github.com/test/repo/pull/1",
+            pr_diff="+x = 1",
+            pr_metadata={"files": ["a.py"]},
+        )
+        assert engine._harness_update_count >= 1
+        assert engine._weight_update_count >= 1
+
+    @pytest.mark.asyncio
+    async def test_scaffold_none_does_not_crash(self):
+        from semar.engine import Engine
+
+        engine = Engine(harness_update_interval=1)
+
+        class AgentNoScaffold:
+            async def execute_cycle(self, ctx):
+                from semar.agents.base_agent import AgentResult
+
+                return AgentResult(
+                    review="approve",
+                    suggestions=[],
+                    metrics={},
+                    trajectory={},
+                    agent_id="mock",
+                    language="python",
+                    pr_url=ctx.pr_url,
+                )
+
+        engine.register_agent("python", AgentNoScaffold())
+        # Should not crash even though agent has no scaffold
+        await engine.review_pr(
+            pr_url="https://github.com/test/repo/pull/1",
+            pr_diff="+import os",
+            pr_metadata={"files": ["test.py"]},
+        )

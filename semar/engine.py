@@ -91,7 +91,7 @@ class Engine:
         Returns:
             Review result with verdict, suggestions, and metrics
         """
-        start = time.time()
+        start = time.perf_counter()
 
         # Run review via JudgeAgent
         result = await self.judge.handle_pr_review(pr_url, pr_diff, pr_metadata)
@@ -125,13 +125,13 @@ class Engine:
         if improvement != ImprovementType.NONE:
             await self._apply_improvement(improvement, analysis)
 
-        # Apply schedule-based updates (independent of analysis)
+        # Apply schedule-based updates (independent — both can run on same cycle)
         if self._should_run_harness_update():
             await self._apply_harness_update(analysis)
-        elif self._should_run_weight_update():
+        if self._should_run_weight_update():
             await self._apply_weight_update(analysis)
 
-        duration_ms = (time.time() - start) * 1000
+        duration_ms = (time.perf_counter() - start) * 1000
         result["metrics"] = {
             **result.get("metrics", {}),
             "duration_ms": duration_ms,
@@ -164,13 +164,35 @@ class Engine:
         """
         failure_modes = analysis.get("failure_modes", [])
 
+        # Normalize failure modes: handle both FailureMode objects and plain dicts
+        normalized_modes = []
+        for fm in failure_modes:
+            if isinstance(fm, dict):
+                from semar.agents.trajectory_analyzer import FailureMode
+
+                normalized_modes.append(
+                    FailureMode(
+                        type=fm.get("type", "unknown"),
+                        severity=fm.get("severity", "medium"),
+                        frequency=fm.get("frequency", 1),
+                        examples=fm.get("examples", []),
+                    )
+                )
+            else:
+                normalized_modes.append(fm)
+
         # Evolve prompts for each registered agent
         for _lang, agent in self.judge.language_agents.items():
-            current_prompt = getattr(agent, "scaffold", {}).get("prompts", {}).get("system", "")
-            if current_prompt and failure_modes:
-                evolved = await self.prompt_evolver.evolve(current_prompt, failure_modes)
-                if evolved != current_prompt and hasattr(agent, "scaffold"):
-                    agent.scaffold.setdefault("prompts", {})["system"] = evolved
+            scaffold = getattr(agent, "scaffold", None)
+            if isinstance(scaffold, dict):
+                current_prompt = scaffold.get("prompts", {}).get("system", "")
+            else:
+                current_prompt = ""
+
+            if current_prompt and normalized_modes:
+                evolved = await self.prompt_evolver.evolve(current_prompt, normalized_modes)
+                if evolved != current_prompt and isinstance(scaffold, dict):
+                    scaffold.setdefault("prompts", {})["system"] = evolved
 
         # Discover skills from recent trajectories
         recent = await self.trajectory_store.get_recent_trajectories(limit=10)
@@ -180,9 +202,11 @@ class Engine:
         # Evolve rules
         current_rules: List[Dict[str, Any]] = []
         for _lang, agent in self.judge.language_agents.items():
-            agent_rules = getattr(agent, "scaffold", {}).get("rules", [])
-            if isinstance(agent_rules, list):
-                current_rules.extend(agent_rules)
+            scaffold = getattr(agent, "scaffold", None)
+            if isinstance(scaffold, dict):
+                agent_rules = scaffold.get("rules", [])
+                if isinstance(agent_rules, list):
+                    current_rules.extend(agent_rules)
 
         if current_rules:
             await self.rule_evolver.evolve(current_rules, analysis)
@@ -192,7 +216,7 @@ class Engine:
             {
                 "type": "harness",
                 "timestamp": time.time(),
-                "failure_modes": [fm.type for fm in failure_modes],
+                "failure_modes": [fm.type for fm in normalized_modes],
             }
         )
 
