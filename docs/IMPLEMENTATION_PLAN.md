@@ -1,6 +1,6 @@
 # SEMAR Implementation Plan
 
-> **Status**: Phases 0-4 are **implemented**. Code examples below may differ from actual code.
+> **Status**: Phases 0-5 are **implemented**. Code examples below may differ from actual code.
 > For accurate API reference, see the source files in `semar/semar/` and tests in `semar/tests/`.
 
 ## Phase 0: Repository Setup — Implemented
@@ -791,7 +791,7 @@ class SkillDiscovery:
 
 ---
 
-## Phase 5: Weight Updates — Planned
+## Phase 5: Weight Updates — Implemented
 
 ### LoRATrainer
 
@@ -948,5 +948,4 @@ async def get_metrics(agent: Optional[str] = None):
 
 ## Next Steps
 
-1. **Phase 5**: Implement weight training (LoRA, RL algorithms)
-2. **Phase 6**: Implement CLI, GitHub bot, and monitoring
+1. **Phase 6**: Implement CLI, GitHub bot, and monitoring
