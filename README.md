@@ -100,11 +100,11 @@ The project includes comprehensive GitHub Actions workflows:
 
 ## Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture documentation.
+See [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) for detailed architecture documentation.
 
 ## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for implementation roadmap and milestones.
+See [docs/ROADMAP.md](../docs/ROADMAP.md) for implementation roadmap and milestones.
 
 ## License
 
