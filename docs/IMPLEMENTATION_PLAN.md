@@ -1,6 +1,9 @@
 # SEMAR Implementation Plan
 
-## Phase 0: Repository Setup
+> **Status**: Phases 0-2 are **implemented**. Code examples below may differ from actual code.
+> For accurate API reference, see the source files in `semar/semar/` and tests in `semar/tests/`.
+
+## Phase 0: Repository Setup — Implemented
 
 ### Commands
 
@@ -36,6 +39,8 @@ __version__ = "0.1.0"
 
 #### `pyproject.toml`
 
+> **Note**: Actual file uses hatchling, Python >=3.12, ty (not mypy), and separates core vs ML deps.
+
 ```toml
 [build-system]
 requires = ["hatchling"]
@@ -47,7 +52,7 @@ version = "0.1.0"
 description = "Self-Evolving Multi-Agent Reviewer"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "litellm",
     "pydantic>=2.0",
@@ -61,8 +66,19 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-asyncio",
+    "pytest-cov",
     "ruff",
-    "mypy",
+    "ty>=0.0.1",
+    "vulture",
+    "radon",
+]
+ml = [
+    "torch>=2.0",
+    "transformers>=4.30",
+    "peft>=0.4.0",
+    "trl>=0.7",
+    "datasets",
+    "numpy",
 ]
 
 [project.scripts]
@@ -136,7 +152,7 @@ Apache 2.0
 
 ---
 
-## Phase 1: Foundation
+## Phase 1: Foundation — Implemented
 
 ### BaseAgent Class
 
@@ -312,28 +328,50 @@ settings = Dynaconf(
 ```toml
 # semar/config/default.toml
 
+[app]
+name = "SEMAR"
+version = "0.1.0"
+debug = false
+
 [llm]
 model = "gpt-4"
-temperature = 0.2
+temperature = 0.7
 max_tokens = 4096
 
 [agent]
-max_parallel = 5
-stall_threshold = 3
+timeout = 300
+max_concurrent_agents = 5
+memory_size = 1000
 
 [trajectory]
 db_path = "semar_trajectories.db"
-retention_days = 90
+retention_days = 30
 
-[weights]
-base_model = "meta-llama/Llama-3-70b"  # or another open-source model
-lora_rank = 32
-learning_rate = 0.00004
+[self_improvement]
+harness_update_interval = 10
+weight_update_interval = 50
+stall_detection_window = 5
+stall_detection_threshold = 0.01
+
+[learning]
+decay_rate = 0.1
+min_relevance = 0.1
+
+[rollback]
+threshold = 0.1
+
+[conflict_resolution]
+credibility_decay_rate = 0.01
+
+[dispatch]
+per_agent_timeout = 300
+circuit_breaker_threshold = 3
+circuit_breaker_recovery_timeout = 60
 ```
 
 ---
 
-## Phase 2: Judge Agent
+## Phase 2: Judge Agent — Implemented
 
 ### JudgeAgent
 
@@ -563,7 +601,7 @@ class RLAlgorithmSelector:
 
 ---
 
-## Phase 3: Language Agents
+## Phase 3: Language Agents — Next
 
 ### BaseLanguageAgent
 
@@ -669,7 +707,7 @@ Review the code thoroughly and provide actionable suggestions."""
 
 ---
 
-## Phase 4: Harness Evolution
+## Phase 4: Harness Evolution — Planned
 
 ### PromptEvolver
 
@@ -753,7 +791,7 @@ class SkillDiscovery:
 
 ---
 
-## Phase 5: Weight Updates
+## Phase 5: Weight Updates — Planned
 
 ### LoRATrainer
 
@@ -817,7 +855,7 @@ class PPO_GAE(BaseAlgorithm):
 
 ---
 
-## Phase 6: Integration
+## Phase 6: Integration — Planned
 
 ### CLI
 
@@ -910,7 +948,7 @@ async def get_metrics(agent: Optional[str] = None):
 
 ## Next Steps
 
-1. Execute Phase 0: Create GitHub repository
-2. Create initial package structure
-3. Implement BaseAgent and TrajectoryStore
-4. Continue with subsequent phases
+1. **Phase 3**: Implement BaseLanguageAgent and 7 language-specific agents
+2. **Phase 4**: Implement harness evolution (PromptEvolver, SkillDiscovery, RuleEvolver)
+3. **Phase 5**: Implement weight training (LoRA, RL algorithms)
+4. **Phase 6**: Implement CLI, GitHub bot, and monitoring

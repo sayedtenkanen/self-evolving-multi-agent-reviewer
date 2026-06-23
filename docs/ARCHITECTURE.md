@@ -1,5 +1,34 @@
 # SEMAR Architecture
 
+> **Status**: This is a **design document**. Code examples are aspirational/reference designs.
+> Components marked as "Implemented" have production code and tests in `semar/semar/` and `semar/tests/`.
+> Components marked as "Planned" are design-only and will be implemented in future phases.
+
+## Implementation Status
+
+| Component | Status | Location |
+|-----------|--------|----------|
+| Judge Agent (orchestrator) | **Implemented** | `semar/semar/agents/judge_agent.py` |
+| BaseAgent (4-step cycle) | **Implemented** | `semar/semar/agents/base_agent.py` |
+| Language Detection | **Implemented** | `judge_agent.py::_detect_languages()` |
+| Parallel Dispatch | **Implemented** | `judge_agent.py::_dispatch_parallel()` |
+| Result Aggregation | **Implemented** | `judge_agent.py::_aggregate_results()` |
+| Conflict Resolution (majority vote) | **Implemented** | `judge_agent.py::_resolve_conflicts()` |
+| TrajectoryAnalyzer | **Implemented** | `semar/semar/agents/trajectory_analyzer.py` |
+| ImprovementSelector | **Implemented** | `semar/semar/agents/improvement_selector.py` |
+| RLAlgorithmSelector | **Implemented** | `semar/semar/agents/rl_algorithm_selector.py` |
+| TrajectoryStore (SQLite) | **Implemented** | `semar/semar/agents/trajectory_store.py` |
+| Config (dynaconf) | **Implemented** | `semar/semar/config/settings.py` |
+| AgentRegistry | **Planned** | Phase 3 |
+| BaseLanguageAgent | **Planned** | Phase 3 |
+| Inter-Agent Communication | **Planned** | Phase 3 |
+| Cross-Agent Learning | **Planned** | Phase 4 |
+| Harness Evolution | **Planned** | Phase 4 |
+| Weight Training (LoRA) | **Planned** | Phase 5 |
+| ConflictResolver (full) | **Planned** | Phase 3 |
+| ParallelDispatcher (circuit breaker) | **Planned** | Phase 3 |
+| LanguageDetector (wrapper) | **Planned** | Phase 3 |
+
 ## System Overview
 
 ```
@@ -34,7 +63,7 @@
 
 ## Components
 
-### Judge Agent (Dual-Role Orchestrator)
+### Judge Agent (Dual-Role Orchestrator) — Implemented
 
 The Judge Agent is a **single class** that handles two distinct roles from the SIA paper:
 
@@ -63,7 +92,7 @@ The Judge Agent is a **single class** that handles two distinct roles from the S
 - `_improve_harness()` - Trigger scaffold evolution
 - `_train_weights()` - Trigger RL training
 
-### Language Agents
+### Language Agents — Planned (Phase 3)
 
 Each language agent is specialized for a specific programming language:
 - Python, JavaScript, TypeScript, Go, Java, Rust, C++
@@ -235,7 +264,7 @@ class AgentRegistry:
 - **Smart Selection**: Best agent chosen by success rate and latency
 - **Failure Tracking**: Rolling success rate, error counts, automatic recovery
 
-### Language Detection Mechanism
+### Language Detection Mechanism — Implemented (simplified in JudgeAgent)
 
 The Judge Agent detects languages in a PR using multiple strategies with confidence scoring:
 
@@ -459,7 +488,7 @@ class LanguageDetector:
 - **Ambiguous file handling**: Files matching multiple languages are flagged for review
 - **Excluded files**: Binary, compiled, and generated files are filtered out
 
-### Inter-Agent Communication Protocol
+### Inter-Agent Communication Protocol — Planned (Phase 3)
 
 Agents communicate during review to share findings, request context, and resolve conflicts:
 
@@ -656,7 +685,7 @@ await agent.send(AgentMessage(
 ))
 ```
 
-### Conflict Resolution
+### Conflict Resolution — Implemented (simplified majority vote)
 
 When agents provide contradictory suggestions, the Judge Agent resolves conflicts using continuous weighting, deduplication, and cycle detection:
 
@@ -867,7 +896,7 @@ class ConflictResolver:
 - **Conflict deduplication**: Same issue flagged by multiple agents is counted once
 - **Cycle detection**: Detects circular conflicts (A disagrees with B, B with C, C with A)
 
-### Parallel Dispatch Error Handling
+### Parallel Dispatch Error Handling — Implemented (simplified)
 
 When dispatching to multiple language agents in parallel, the system handles failures with timeout enforcement, circuit breakers, and resource limiting:
 
@@ -1031,22 +1060,22 @@ class ParallelDispatcher:
 - Prevents resource exhaustion when reviewing large PRs
 - Configurable based on system capacity
 
-### Self-Improvement Engine
+### Self-Improvement Engine — Partially Implemented
 
-#### Harness Evolution
+#### Harness Evolution — Planned (Phase 4)
 
 - **PromptEvolver**: Improves agent prompts based on failure analysis
 - **SkillDiscovery**: Finds new analysis patterns from trajectories
 - **RuleEvolver**: Optimizes review criteria based on outcomes
 
-#### Weight Training
+#### Weight Training — Planned (Phase 5)
 
 - **LoRA Training**: Low-rank adaptation for model weights
-- **Algorithm Selection**: Adaptive choice based on reward structure
-- **Data Pipeline**: Collects training data from trajectories
+- **Algorithm Selection**: Adaptive choice based on reward structure (RLAlgorithmSelector is implemented)
+- **Data Pipeline**: Collects training data from trajectories (TrajectoryStore is implemented)
 - **Reward Signals**: Outcome-based, human feedback, cross-agent
 
-#### Cross-Agent Learning
+#### Cross-Agent Learning — Planned (Phase 4)
 
 Agents share knowledge across languages using a full similarity matrix, semantic adaptation, and transfer validation:
 

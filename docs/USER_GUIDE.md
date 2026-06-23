@@ -197,25 +197,38 @@ stats = await store.get_agent_stats("python-reviewer")
 
 ## Configuration
 
-SEMAR uses dynaconf. Create a `settings.toml` in your working directory:
+SEMAR uses dynaconf. The default config is in `semar/config/default.toml`. Override with a `settings.toml` in your working directory or via environment variables:
 
 ```toml
-[default]
-api_provider = "openai"
-api_model = "gpt-4"
+[app]
+name = "SEMAR"
+version = "0.1.0"
+
+[llm]
+model = "gpt-4"
+temperature = 0.7
 max_tokens = 4096
-temperature = 0.1
-stall_threshold = 3
-trajectory_db_path = "semar_trajectories.db"
-log_level = "INFO"
+
+[agent]
+timeout = 300
+max_concurrent_agents = 5
+
+[trajectory]
+db_path = "semar_trajectories.db"
+retention_days = 30
+
+[self_improvement]
+harness_update_interval = 10
+weight_update_interval = 50
+stall_detection_window = 5
 ```
 
 Or set environment variables:
 
 ```bash
-export SEMAR_API_PROVIDER=openai
-export SEMAR_API_KEY=sk-...
-export SEMAR_API_MODEL=gpt-4
+export SEMAR_LLM_MODEL=gpt-4
+export SEMAR_LLM_API_KEY=sk-...
+export SEMAR_AGENT_TIMEOUT=300
 ```
 
 ## Running Tests
@@ -259,7 +272,7 @@ semar/
 │   └── utils/
 │       └── helpers.py             # Utilities
 ├── tests/
-│   ├── unit/                      # 72 unit tests
+│   ├── unit/                      # 78 unit tests
 │   ├── security/                  # 85 security tests
 │   └── ...
 ├── docs/

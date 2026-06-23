@@ -67,35 +67,54 @@
 
 ### Package Layout
 
+> **Note**: This is the actual layout as of Phase 2 completion.
+
 ```
-semar/                          # Main package
-├── agents/                     # Agent implementations
-│   ├── language_agents/        # Language-specific agents
-│   └── __init__.py
-├── self_improvement/           # Self-improvement engine
-│   ├── harness/                # Harness evolution
-│   ├── weight_training/        # Weight updates
-│   │   └── algorithms/         # RL algorithms
-│   └── trajectory/             # Trajectory analysis
-├── config/                     # Configuration
-├── repo_management/            # Multi-repo support
-├── monitoring/                 # Observability
-└── utils/                      # Helper functions
+semar/                          # Repository root
+├── semar/                      # Python package
+│   ├── __init__.py             # v0.1.0
+│   ├── agents/                 # Agent implementations
+│   │   ├── base_agent.py       # BaseAgent + AgentContext + AgentResult
+│   │   ├── judge_agent.py      # JudgeAgent orchestrator
+│   │   ├── trajectory_analyzer.py
+│   │   ├── improvement_selector.py
+│   │   ├── rl_algorithm_selector.py
+│   │   └── trajectory_store.py
+│   ├── config/
+│   │   ├── settings.py         # Dynaconf config
+│   │   └── default.toml        # Default values
+│   └── utils/
+│       └── helpers.py          # Utilities
+├── tests/
+│   ├── unit/                   # 78 unit tests
+│   ├── security/               # 85 security tests
+│   └── ...
+├── docs/                       # Documentation
+├── .github/workflows/          # CI/CD
+├── pyproject.toml
+└── README.md
 ```
 
 ### Test Layout
 
 ```
 tests/
-├── test_agents/                # Agent tests
+├── unit/                       # Unit tests
 │   ├── test_base_agent.py
 │   ├── test_judge_agent.py
-│   └── test_language_agents/
-├── test_self_improvement/      # Self-improvement tests
-│   ├── test_harness/
-│   └── test_weight_training/
-├── test_config/                # Config tests
-└── conftest.py                 # Pytest fixtures
+│   ├── test_trajectory_analyzer.py
+│   ├── test_improvement_selector.py
+│   ├── test_rl_algorithm_selector.py
+│   ├── test_parallel_dispatch.py
+│   └── test_language_detection.py
+├── security/                   # Security tests
+│   ├── test_secrets.py
+│   ├── test_injection.py
+│   ├── test_prompt_injection.py
+│   └── test_exfiltration.py
+├── integration/                # (planned)
+├── e2e/                        # (planned)
+└── ...
 ```
 
 ---
@@ -114,20 +133,27 @@ tests/
 ### TOML Settings
 
 ```toml
+[app]
+name = "SEMAR"
+version = "0.1.0"
+
 [llm]
 model = "gpt-4"
-temperature = 0.2
+temperature = 0.7
+max_tokens = 4096
 
 [agent]
-max_parallel = 5
-stall_threshold = 3
+timeout = 300
+max_concurrent_agents = 5
 
 [trajectory]
 db_path = "semar_trajectories.db"
+retention_days = 30
 
-[weights]
-base_model = "meta-llama/Llama-3-70b"  # or another open-source model
-lora_rank = 32
+[self_improvement]
+harness_update_interval = 10
+weight_update_interval = 50
+stall_detection_window = 5
 ```
 
 ---
