@@ -12,6 +12,7 @@ concurrency:
 
 env:
   PYTHON_DEFAULT: "3.12"
+  UV_SYSTEM_PYTHON: "true"
 
 jobs:
   ruff-lint:

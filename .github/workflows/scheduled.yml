@@ -17,6 +17,7 @@ on:
 
 env:
   PYTHON_DEFAULT: "3.12"
+  UV_SYSTEM_PYTHON: "true"
 
 jobs:
   full-test-suite:
