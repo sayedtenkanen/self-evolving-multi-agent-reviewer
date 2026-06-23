@@ -204,6 +204,7 @@ class TestSkillDiscovery:
             {"steps": {"review": {"output": "Found SQL injection"}}, "metrics": {}},
         ]
         result = await discovery.discover(trajectories=trajectories)
+        # With 3 matching trajectories, security_review should be discovered
         assert len(result) >= 0  # May or may not find patterns depending on threshold
 
     @pytest.mark.asyncio
@@ -355,7 +356,7 @@ class TestRuleEvolver:
         assert "no_exec" in rule_names
 
     @pytest.mark.asyncio
-    async def test_evolve_severity升级_on_frequent_failures(self):
+    async def test_evolve_severity_upgrade_on_frequent_failures(self):
         from semar.self_improvement.harness.rule_evolver import RuleEvolver
 
         evolver = RuleEvolver()

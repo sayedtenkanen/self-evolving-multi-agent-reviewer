@@ -159,7 +159,7 @@ class RuleEvolver:
                 result.append(
                     {
                         "name": generic_name,
-                        "pattern": "",
+                        "pattern": "(?!)",
                         "severity": failure.severity,
                         "description": f"Auto-generated rule for {failure.type} (frequency: {failure.frequency})",
                     }
@@ -176,6 +176,8 @@ class RuleEvolver:
         # Identify which rules are causing false positives
         false_positive_rules = set()
         for example in failure.examples:
+            if not isinstance(example, dict):
+                continue
             rule_name = example.get("rule", "")
             if rule_name:
                 false_positive_rules.add(rule_name)
