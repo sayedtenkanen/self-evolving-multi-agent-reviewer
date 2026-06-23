@@ -43,8 +43,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
-      - name: Install ty
-        run: pip install ty
+      - name: Install package
+        run: pip install -e .
 
       - name: Run ty
         run: ty check

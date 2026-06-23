@@ -56,8 +56,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
-      - name: Install ty
-        run: pip install ty
+      - name: Install package and ty
+        run: pip install -e . ty
 
       - name: Run ty type checker
         run: ty check
