@@ -19,22 +19,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
       - name: Install build tools
-        run: uv pip install --system build
+        run: pip install build
 
       - name: Build sdist and wheel
         run: python -m build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -53,7 +49,7 @@ jobs:
           name: dist
           path: dist/
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
@@ -109,7 +105,6 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          # Get previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           if [ -z "$PREV_TAG" ]; then
             CHANGES="Initial release"
