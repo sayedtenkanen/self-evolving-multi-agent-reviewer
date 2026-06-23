@@ -24,6 +24,7 @@ class GRPO(BaseAlgorithm):
 
         Computes group-relative advantages and updates policy.
         """
+        # Collect all rewards across trajectories
         all_rewards: List[float] = []
         for traj in trajectories:
             rewards = traj.get("rewards", [])
@@ -32,15 +33,22 @@ class GRPO(BaseAlgorithm):
         if not all_rewards:
             return {"loss": 0.0, "num_samples": 0}
 
-        # Group-relative advantage: normalize rewards within group
-        mean_reward = sum(all_rewards) / len(all_rewards)
-        advantages = [(r - mean_reward) for r in all_rewards]
+        # Group-relative: normalize rewards within each trajectory for variance reduction
+        advantages: List[float] = []
+        for traj in trajectories:
+            rewards = traj.get("rewards", [])
+            if len(rewards) > 1:
+                traj_mean = sum(rewards) / len(rewards)
+                traj_var = sum((r - traj_mean) ** 2 for r in rewards) / len(rewards)
+                traj_std = max(traj_var**0.5, 1e-8)
+                advantages.extend([(r - traj_mean) / traj_std for r in rewards])
+            else:
+                advantages.extend(rewards)
 
-        # Simplified policy gradient loss
-        loss = -sum(advantages) / max(len(advantages), 1)
+        # Policy gradient loss: negative mean reward
+        loss = -sum(all_rewards) / len(all_rewards)
 
         return {
             "loss": loss,
-            "mean_reward": mean_reward,
             "num_samples": len(all_rewards),
         }

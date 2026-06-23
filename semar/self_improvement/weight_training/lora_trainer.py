@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from semar.self_improvement.weight_training.algorithms import get_algorithm
+
 
 @dataclass
 class ValidationResult:
@@ -64,11 +66,24 @@ class LoRATrainer:
         # Validate data
         validation = await self.validate_data(training_data)
 
+        # Invoke the selected algorithm
+        algo_metrics: Dict[str, Any] = {}
+        if validation.is_valid:
+            algo = get_algorithm(algorithm)
+            trajectories = training_data.get("trajectories", [])
+            algo_result = await algo.train(trajectories=trajectories, hyperparams=hyperparams)
+            algo_metrics = algo_result
+
         # Record in history
         result = TrainResult(
             algorithm=algorithm,
             checkpoint_path=str(self.output_dir / f"{algorithm}_checkpoint"),
-            metrics={"valid": validation.is_valid, "data_points": len(training_data.get("trajectories", []))},
+            metrics={
+                "valid": validation.is_valid,
+                "data_points": len(training_data.get("trajectories", [])),
+                "algorithm_loss": algo_metrics.get("loss", 0.0),
+                **{k: v for k, v in algo_metrics.items() if k != "loss"},
+            },
             duration_ms=(time.time() - start) * 1000,
         )
 

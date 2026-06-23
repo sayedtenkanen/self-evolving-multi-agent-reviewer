@@ -79,6 +79,19 @@ class TestLoRATrainer:
         result = await trainer.validate_data(data)
         assert result.is_valid is True
 
+    @pytest.mark.asyncio
+    async def test_train_invokes_algorithm(self):
+        from semar.self_improvement.weight_training.lora_trainer import LoRATrainer
+
+        trainer = LoRATrainer()
+        result = await trainer.train(
+            algorithm="grpo",
+            training_data={"trajectories": [{"rewards": [1.0, 0.5]}], "rewards": [1.0, 0.5]},
+            hyperparams={"lr": 1e-4},
+        )
+        assert result.algorithm == "grpo"
+        assert "algorithm_loss" in result.metrics
+
 
 # ============================================================
 # BaseAlgorithm Tests
@@ -172,6 +185,32 @@ class TestGRPO:
             hyperparams={"lr": 1e-4, "kl_coeff": 0.1},
         )
         assert "loss" in result
+
+    @pytest.mark.asyncio
+    async def test_train_loss_nonzero_for_positive_rewards(self):
+        from semar.self_improvement.weight_training.algorithms.grpo import GRPO
+
+        algo = GRPO()
+        result = await algo.train(
+            trajectories=[{"rewards": [1.0, 0.5]}],
+            hyperparams={},
+        )
+        assert result["loss"] != 0.0
+
+    @pytest.mark.asyncio
+    async def test_train_multi_trajectory_normalization(self):
+        from semar.self_improvement.weight_training.algorithms.grpo import GRPO
+
+        algo = GRPO()
+        result = await algo.train(
+            trajectories=[
+                {"rewards": [1.0, 1.0]},
+                {"rewards": [0.0, 0.0]},
+            ],
+            hyperparams={},
+        )
+        # High-reward trajectory should produce negative loss (encourage more)
+        assert result["loss"] < 0.0
 
 
 # ============================================================
@@ -318,6 +357,23 @@ class TestDPO:
         )
         assert "loss" in result
 
+    @pytest.mark.asyncio
+    async def test_train_no_overflow_large_negative_diff(self):
+        from semar.self_improvement.weight_training.algorithms.dpo import DPO
+
+        algo = DPO()
+        result = await algo.train(
+            trajectories=[
+                {
+                    "preferred": {"output": "good", "reward": -100.0},
+                    "rejected": {"output": "bad", "reward": 100.0},
+                }
+            ],
+            hyperparams={"beta": 0.1},
+        )
+        assert "loss" in result
+        assert result["loss"] != float("inf")
+
 
 # ============================================================
 # DataPipeline Tests
@@ -383,6 +439,27 @@ class TestDataPipeline:
         train, val = pipeline.split(data, val_ratio=0.2)
         assert len(train) == 80
         assert len(val) == 20
+
+    def test_split_val_ratio_out_of_range(self):
+        from semar.self_improvement.weight_training.data_pipeline import DataPipeline
+
+        pipeline = DataPipeline()
+        with pytest.raises(ValueError, match="val_ratio"):
+            pipeline.split([1, 2, 3], val_ratio=-0.1)
+        with pytest.raises(ValueError, match="val_ratio"):
+            pipeline.split([1, 2, 3], val_ratio=1.5)
+
+    @pytest.mark.asyncio
+    async def test_process_missing_reward_key(self):
+        from semar.self_improvement.weight_training.data_pipeline import DataPipeline
+
+        pipeline = DataPipeline()
+        data = [
+            {"output": "good"},  # no reward key at all
+            {"output": "bad", "reward": 0.5},
+        ]
+        result = await pipeline.process(data)
+        assert result.count == 1
 
 
 # ============================================================

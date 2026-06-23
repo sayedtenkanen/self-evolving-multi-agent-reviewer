@@ -68,14 +68,21 @@ class DataPipeline:
         Returns:
             Tuple of (train_data, val_data)
         """
+        if not 0.0 <= val_ratio <= 1.0:
+            raise ValueError(f"val_ratio must be between 0.0 and 1.0, got {val_ratio}")
+
         split_idx = int(len(data) * (1 - val_ratio))
         return data[:split_idx], data[split_idx:]
 
     def _is_valid(self, item: Any) -> bool:
-        """Check if a data item is valid."""
+        """Check if a data item is valid.
+
+        Rejects items that are not dicts, have missing reward keys,
+        or have None rewards.
+        """
         if not isinstance(item, dict):
             return False
-        # Check for None rewards
-        if "reward" in item and item["reward"] is None:
+        # Check for missing reward key or None reward
+        if "reward" not in item or item["reward"] is None:
             return False
         return True

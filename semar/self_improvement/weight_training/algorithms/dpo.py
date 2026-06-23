@@ -1,5 +1,6 @@
 """DPO - Direct Preference Optimization."""
 
+import math
 from typing import Any, Dict, List
 
 from semar.self_improvement.weight_training.algorithms.base_algorithm import BaseAlgorithm
@@ -37,10 +38,9 @@ class DPO(BaseAlgorithm):
 
             # DPO loss: -log(sigmoid(beta * (log pref - log rej)))
             # Simplified: directly use reward difference
-            import math
-
             log_ratio = beta * (pref_reward - rej_reward)
-            loss = -math.log(1.0 + math.exp(-log_ratio))
+            # Numerically stable: log(1 + exp(-x)) = max(0, -x) + log1p(exp(-|x|))
+            loss = max(0.0, -log_ratio) + math.log1p(math.exp(-abs(log_ratio)))
             losses.append(loss)
 
         if not losses:

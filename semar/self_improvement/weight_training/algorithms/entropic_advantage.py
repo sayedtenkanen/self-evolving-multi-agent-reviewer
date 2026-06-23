@@ -1,5 +1,6 @@
 """Entropic Advantage - For right-skewed reward distributions."""
 
+import math
 from typing import Any, Dict, List
 
 from semar.self_improvement.weight_training.algorithms.base_algorithm import BaseAlgorithm
@@ -39,7 +40,7 @@ class EntropicAdvantage(BaseAlgorithm):
         # Entropy estimate (simplified)
         p_success = max(success_rate, 1e-8)
         p_fail = max(1.0 - success_rate, 1e-8)
-        entropy = -(p_success * __import__("math").log(p_success) + p_fail * __import__("math").log(p_fail))
+        entropy = -(p_success * math.log(p_success) + p_fail * math.log(p_fail))
 
         # Weighted advantage
         mean_advantage = sum(all_rewards) / len(all_rewards)
