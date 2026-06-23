@@ -10,24 +10,24 @@
 |-----------|--------|----------|
 | Judge Agent (orchestrator) | **Implemented** | `semar/semar/agents/judge_agent.py` |
 | BaseAgent (4-step cycle) | **Implemented** | `semar/semar/agents/base_agent.py` |
-| Language Detection | **Implemented** | `judge_agent.py::_detect_languages()` |
-| Parallel Dispatch | **Implemented** | `judge_agent.py::_dispatch_parallel()` |
-| Result Aggregation | **Implemented** | `judge_agent.py::_aggregate_results()` |
-| Conflict Resolution (majority vote) | **Implemented** | `judge_agent.py::_resolve_conflicts()` |
+| Language Detection | **Implemented** | `semar/semar/agents/judge_agent.py:_detect_languages()` |
+| Parallel Dispatch | **Implemented** | `semar/semar/agents/judge_agent.py:_dispatch_parallel()` |
+| Result Aggregation | **Implemented** | `semar/semar/agents/judge_agent.py:_aggregate_results()` |
+| Conflict Resolution (majority vote) | **Implemented** | `semar/semar/agents/judge_agent.py:_resolve_conflicts()` |
 | TrajectoryAnalyzer | **Implemented** | `semar/semar/agents/trajectory_analyzer.py` |
 | ImprovementSelector | **Implemented** | `semar/semar/agents/improvement_selector.py` |
 | RLAlgorithmSelector | **Implemented** | `semar/semar/agents/rl_algorithm_selector.py` |
 | TrajectoryStore (SQLite) | **Implemented** | `semar/semar/agents/trajectory_store.py` |
 | Config (dynaconf) | **Implemented** | `semar/semar/config/settings.py` |
-| AgentRegistry | **Planned** | Phase 3 |
-| BaseLanguageAgent | **Planned** | Phase 3 |
-| Inter-Agent Communication | **Planned** | Phase 3 |
-| Cross-Agent Learning | **Planned** | Phase 4 |
-| Harness Evolution | **Planned** | Phase 4 |
-| Weight Training (LoRA) | **Planned** | Phase 5 |
-| ConflictResolver (full) | **Planned** | Phase 3 |
-| ParallelDispatcher (circuit breaker) | **Planned** | Phase 3 |
-| LanguageDetector (wrapper) | **Planned** | Phase 3 |
+| AgentRegistry | **Planned** | `semar/semar/agents/` (Phase 3) |
+| BaseLanguageAgent | **Planned** | `semar/semar/agents/` (Phase 3) |
+| Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 3) |
+| Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
+| Harness Evolution | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
+| Weight Training (LoRA) | **Planned** | `semar/semar/self_improvement/` (Phase 5) |
+| ConflictResolver (full) | **Planned** | `semar/semar/agents/` (Phase 3) |
+| ParallelDispatcher (circuit breaker) | **Planned** | `semar/semar/agents/` (Phase 3) |
+| LanguageDetector (wrapper) | **Planned** | `semar/semar/agents/` (Phase 3) |
 
 ## System Overview
 

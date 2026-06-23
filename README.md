@@ -20,6 +20,18 @@ cd self-evolving-multi-agent-reviewer/semar
 pip install -e ".[dev]"
 ```
 
+## Getting Started
+
+```python
+from semar.agents.judge_agent import JudgeAgent
+
+judge = JudgeAgent()
+# Register a language agent, then call:
+# result = await judge.handle_pr_review(pr_url, pr_diff, pr_metadata)
+```
+
+See the [User Guide](docs/USER_GUIDE.md#quick-start) for a complete walkthrough.
+
 ## Documentation
 
 | Document | Description |
