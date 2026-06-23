@@ -206,11 +206,11 @@ Implement RL training for model weight adaptation.
 
 ### Milestone M5 (Week 10)
 
-- [ ] LoRA training pipeline working
-- [ ] All 6 RL algorithms implemented
-- [ ] Data pipeline collecting training data
-- [ ] Reward signals computed correctly
-- [ ] Unit tests passing
+- [x] LoRA training pipeline working
+- [x] All 6 RL algorithms implemented
+- [x] Data pipeline collecting training data
+- [x] Reward signals computed correctly
+- [x] Unit tests passing
 
 ---
 

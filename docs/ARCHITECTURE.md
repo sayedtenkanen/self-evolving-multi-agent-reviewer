@@ -31,7 +31,7 @@
 | Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 4) |
 | Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
 | Harness Evolution | **Implemented** | `semar/semar/self_improvement/harness/` |
-| Weight Training (LoRA) | **Planned** | `semar/semar/self_improvement/` (Phase 5) |
+| Weight Training (LoRA) | **Implemented** | `semar/semar/self_improvement/weight_training/` |
 
 ## System Overview
 
@@ -1072,7 +1072,7 @@ class ParallelDispatcher:
 - **SkillDiscovery**: Finds new analysis patterns from trajectories
 - **RuleEvolver**: Optimizes review criteria based on outcomes
 
-#### Weight Training — Planned (Phase 5)
+#### Weight Training — Implemented
 
 - **LoRA Training**: Low-rank adaptation for model weights
 - **Algorithm Selection**: Adaptive choice based on reward structure (RLAlgorithmSelector is implemented)
