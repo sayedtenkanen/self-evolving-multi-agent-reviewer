@@ -12,7 +12,6 @@ concurrency:
 
 env:
   PYTHON_DEFAULT: "3.12"
-  UV_SYSTEM_PYTHON: "false"
 
 jobs:
   lint:
@@ -21,16 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
-      - name: Install dependencies
-        run: uv pip install --system ruff
+      - name: Install Ruff
+        run: pip install ruff
 
       - name: Ruff lint
         run: ruff check .
@@ -44,16 +39,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
-      - name: Install dependencies
-        run: uv pip install --system ty
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
 
       - name: Run ty
         run: ty check
@@ -68,16 +59,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv pip install --system -e ".[dev]"
+        run: pip install -e ".[dev]"
 
       - name: Run unit tests with coverage
         run: |
@@ -101,16 +88,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
       - name: Install dependencies
-        run: uv pip install --system -e ".[dev]"
+        run: pip install -e ".[dev]"
 
       - name: Run security tests
         run: |
@@ -125,23 +108,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
       - name: Install build tools
-        run: uv pip install --system build
+        run: pip install build
 
       - name: Build sdist and wheel
         run: python -m build
 
       - name: Verify package
         run: |
-          uv pip install --system dist/*.whl
+          pip install dist/*.whl
           python -c "import semar; print(f'semar {semar.__version__} installed successfully')"
 
       - name: Upload build artifacts
