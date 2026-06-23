@@ -1,5 +1,9 @@
 # Self-Improvement Patterns from SIA Paper
 
+> **Note**: This is a reference document describing patterns from the SIA paper.
+> Code examples are aspirational designs. Implemented components are in `semar/semar/agents/`.
+> See `docs/ARCHITECTURE.md` for implementation status.
+
 ## Overview
 
 The SIA paper ("Self Improving AI with Harness & Weight Updates") proposes a system that improves both the scaffold (harness) and model weights of an AI agent. This document summarizes the key patterns and how they apply to SEMAR.

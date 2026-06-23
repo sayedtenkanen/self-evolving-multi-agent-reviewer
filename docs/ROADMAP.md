@@ -11,7 +11,7 @@
 | **Timeline** | 10-12 weeks (solo developer) |
 | **Approach** | Full implementation with harness + weight updates |
 
-## Phase 0: Repository Setup (Day 1)
+## Phase 0: Repository Setup (Day 1) — Done
 
 ### Tasks
 
@@ -34,7 +34,7 @@
 
 ---
 
-## Phase 1: Foundation (Weeks 1-2)
+## Phase 1: Foundation (Weeks 1-2) — Done
 
 ### Goal
 
@@ -60,15 +60,15 @@ Set up project structure and core infrastructure.
 
 ### Milestone M1 (Week 2)
 
-- [ ] BaseAgent abstract class implemented
-- [ ] TrajectoryStore working with SQLite
-- [ ] Config system operational
-- [ ] Unit tests passing
-- [ ] Package installable via `pip install -e .`
+- [x] BaseAgent abstract class implemented
+- [x] TrajectoryStore working with SQLite
+- [x] Config system operational
+- [x] Unit tests passing
+- [x] Package installable via `pip install -e .`
 
 ---
 
-## Phase 2: Judge Agent (Weeks 3-4)
+## Phase 2: Judge Agent (Weeks 3-4) — Done
 
 ### Goal
 
@@ -94,16 +94,16 @@ Build the orchestrator that analyzes trajectories and decides improvements.
 
 ### Milestone M2 (Week 4)
 
-- [ ] JudgeAgent orchestrates language agents
-- [ ] TrajectoryAnalyzer detects failure modes
-- [ ] ImprovementSelector decides H vs W
-- [ ] RLAlgorithmSelector picks appropriate algorithm
-- [ ] Unit tests passing
-- [ ] Integration test with mock agents
+- [x] JudgeAgent orchestrates language agents
+- [x] TrajectoryAnalyzer detects failure modes
+- [x] ImprovementSelector decides H vs W
+- [x] RLAlgorithmSelector picks appropriate algorithm
+- [x] Unit tests passing
+- [x] Integration test with mock agents
 
 ---
 
-## Phase 3: Language Agents (Weeks 5-6)
+## Phase 3: Language Agents (Weeks 5-6) — Next
 
 ### Goal
 
