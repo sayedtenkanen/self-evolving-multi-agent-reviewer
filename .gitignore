@@ -52,3 +52,5 @@ Thumbs.db
 # Project specific
 *.log
 semar_config.toml
+semar_engine.db
+*.db
