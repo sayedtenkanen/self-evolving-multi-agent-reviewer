@@ -43,8 +43,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_DEFAULT }}
 
-      - name: Install package
-        run: pip install -e .
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
 
       - name: Run ty
         run: ty check
