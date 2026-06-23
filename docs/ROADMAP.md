@@ -140,7 +140,7 @@ Implement language-specific agents with evolvable scaffolds.
 
 ---
 
-## Phase 4: Harness Evolution (Weeks 7-8) — Next
+## Phase 4: Harness Evolution (Weeks 7-8) — Done
 
 ### Goal
 
@@ -175,7 +175,7 @@ Build the system that evolves agent scaffolds.
 
 ---
 
-## Phase 5: Weight Updates (Weeks 9-10)
+## Phase 5: Weight Updates (Weeks 9-10) — Next
 
 ### Goal
 
