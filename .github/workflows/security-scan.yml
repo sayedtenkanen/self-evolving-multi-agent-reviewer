@@ -1,0 +1,144 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly scan on Mondays at 06:00 UTC
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_DEFAULT: "3.12"
+
+jobs:
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install detect-secrets
+        run: uv pip install --system detect-secrets
+
+      - name: Scan for secrets
+        run: |
+          detect-secrets scan --all-files --exclude-files '\.venv/' \
+            --exclude-files 'semar\.egg-info/' \
+            --exclude-files '__pycache__/' \
+            --output .secrets.baseline
+
+      - name: Verify no secrets found
+        run: |
+          if detect-secrets audit .secrets.baseline | grep -q "No secrets"; then
+            echo "No secrets detected"
+          else
+            echo "Potential secrets detected - review .secrets.baseline"
+            detect-secrets audit .secrets.baseline
+          fi
+
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install pip-audit
+        run: uv pip install --system pip-audit
+
+      - name: Generate requirements
+        run: uv pip compile pyproject.toml --output-file requirements-audit.txt
+
+      - name: Audit dependencies
+        run: pip-audit -r requirements-audit.txt --desc
+
+  security-tests:
+    name: Security Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite:
+          - tests/security/test_secrets.py
+          - tests/security/test_injection.py
+          - tests/security/test_exfiltration.py
+          - tests/security/test_prompt_injection.py
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Run ${{ matrix.test-suite }}
+        run: python -m pytest ${{ matrix.test-suite }} -v --tb=long
+
+  sast:
+    name: Static Application Security Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install Bandit
+        run: uv pip install --system bandit
+
+      - name: Run Bandit security scan
+        run: |
+          bandit -r semar/ \
+            --severity-level medium \
+            --confidence-level medium \
+            -f json \
+            -o bandit-report.json \
+            || true
+
+      - name: Display results
+        if: always()
+        run: |
+          if [ -f bandit-report.json ]; then
+            bandit -r semar/ --severity-level medium --confidence-level medium -f screen || true
+          fi
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json

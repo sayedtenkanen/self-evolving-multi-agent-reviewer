@@ -1,0 +1,133 @@
+name: Scheduled Maintenance
+
+on:
+  schedule:
+    # Every Sunday at 02:00 UTC
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+    inputs:
+      full_suite:
+        description: "Run full test suite"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+env:
+  PYTHON_DEFAULT: "3.12"
+
+jobs:
+  full-test-suite:
+    name: Full Test Suite
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || inputs.full_suite == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Run all tests
+        run: |
+          python -m pytest tests/ \
+            -v \
+            --tb=short \
+            --cov=semar \
+            --cov-report=xml:coverage-scheduled.xml \
+            --cov-report=term-missing
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-scheduled
+          path: coverage-scheduled.xml
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install audit tools
+        run: uv pip install --system pip-audit safety
+
+      - name: Audit with pip-audit
+        run: |
+          pip-audit --desc || true
+
+      - name: Safety check
+        run: |
+          safety check --full-report || true
+
+  dependency-compatibility:
+    name: Dependency Compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Check dependency resolution
+        run: |
+          echo "=== Checking pip resolution ==="
+          uv pip compile pyproject.toml --output-file requirements-compiled.txt
+          echo "Resolution successful"
+
+      - name: Check for outdated packages
+        run: |
+          uv pip list --outdated || true
+
+  health-check:
+    name: Package Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install package
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Verify imports
+        run: |
+          python -c "
+          import semar
+          from semar.agents.base_agent import BaseAgent
+          from semar.agents.trajectory_store import TrajectoryStore
+          from semar.config.settings import Config
+          from semar.utils.helpers import generate_id, hash_content
+          print(f'All imports successful - semar {semar.__version__}')
+          "
+
+      - name: Verify test discovery
+        run: python -m pytest --collect-only tests/ -q | tail -1

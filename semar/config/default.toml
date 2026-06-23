@@ -9,7 +9,7 @@ debug = false
 model = "gpt-4"
 temperature = 0.7
 max_tokens = 4096
-# api_key = "set via SEMAR_LLM_API_KEY environment variable"
+# api_key: set via SEMAR_LLM_API_KEY environment variable
 
 [agent]
 timeout = 300

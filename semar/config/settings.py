@@ -3,10 +3,10 @@
 Provides centralized configuration management for SEMAR.
 """
 
-from dynaconf import Dynaconf
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from dynaconf import Dynaconf
 
 # Default settings
 DEFAULT_SETTINGS = {
@@ -14,52 +14,41 @@ DEFAULT_SETTINGS = {
     "app_name": "SEMAR",
     "version": "0.1.0",
     "debug": False,
-    
     # LLM Configuration
     "llm_model": "gpt-4",
     "llm_temperature": 0.7,
     "llm_max_tokens": 4096,
     "llm_api_key": None,  # Set via environment variable SEMAR_LLM_API_KEY
-    
     # Agent Configuration
     "agent_timeout": 300,  # seconds
     "max_concurrent_agents": 5,
     "agent_memory_size": 1000,
-    
     # Trajectory Store
     "trajectory_db_path": "semar_trajectories.db",
     "trajectory_retention_days": 30,
-    
     # Self-Improvement
     "harness_update_interval": 10,  # PRs
     "weight_update_interval": 50,  # PRs
     "stall_detection_window": 5,
     "stall_detection_threshold": 0.01,
-    
     # Learning Decay
     "learning_decay_rate": 0.1,
     "learning_min_relevance": 0.1,
-    
     # Rollback
     "rollback_threshold": 0.1,
-    
     # Conflict Resolution
     "credibility_decay_rate": 0.01,
-    
     # Parallel Dispatch
     "per_agent_timeout": 300,
     "circuit_breaker_threshold": 3,
     "circuit_breaker_recovery_timeout": 60,
-    
     # Language Detection
     "min_files_for_dispatch": 1,
     "max_cache_size": 100,
-    
     # Organization
     "org_id": "default",
     "org_max_learnings": 1000,
     "org_relevance_threshold": 0.7,
-    
     # Logging
     "log_level": "INFO",
     "log_file": "semar.log",
@@ -74,26 +63,26 @@ def create_settings(
     base_path: Optional[Path] = None,
 ) -> Dynaconf:
     """Create a Dynaconf settings instance.
-    
+
     Args:
         envvar_prefix: Prefix for environment variables
         settings_files: List of settings files to load
         environments: Whether to support environment-based settings
         env_switcher: Environment variable to switch environments
         base_path: Base path for settings files
-        
+
     Returns:
         Dynaconf settings instance
     """
     if base_path is None:
         base_path = Path(__file__).parent
-    
+
     if settings_files is None:
         settings_files = [
             str(base_path / "default.toml"),
             ".semar.toml",
         ]
-    
+
     settings = Dynaconf(
         envvar_prefix=envvar_prefix,
         settings_files=settings_files,
@@ -101,12 +90,12 @@ def create_settings(
         env_switcher=env_switcher,
         core_loaders=["TOML"],
     )
-    
+
     # Set default values
     for key, value in DEFAULT_SETTINGS.items():
         if not settings.exists(key):
             settings.set(key, value)
-    
+
     return settings
 
 
@@ -116,7 +105,7 @@ settings = create_settings()
 
 class Config:
     """Configuration manager for SEMAR.
-    
+
     Provides a unified interface to access settings with type safety.
     """
 
@@ -210,11 +199,11 @@ class Config:
 
     def get(self, key: str, default: Any = None) -> Any:
         """Get a setting value.
-        
+
         Args:
             key: Setting key
             default: Default value if key not found
-            
+
         Returns:
             Setting value
         """
@@ -222,7 +211,7 @@ class Config:
 
     def set(self, key: str, value: Any) -> None:
         """Set a setting value.
-        
+
         Args:
             key: Setting key
             value: Setting value
@@ -231,7 +220,7 @@ class Config:
 
     def as_dict(self) -> Dict[str, Any]:
         """Get all settings as a dictionary.
-        
+
         Returns:
             Dictionary of all settings
         """

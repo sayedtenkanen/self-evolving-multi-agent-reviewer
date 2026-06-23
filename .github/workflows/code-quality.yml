@@ -1,0 +1,144 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_DEFAULT: "3.12"
+
+jobs:
+  ruff-lint:
+    name: Ruff Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install Ruff
+        run: uv pip install --system ruff
+
+      - name: Lint with Ruff
+        run: ruff check . --output-format=github
+
+      - name: Check for fixable issues
+        run: |
+          FIXABLE=$(ruff check . --select I001 --output-format=json | python -c "import sys, json; print(len(json.load(sys.stdin)))")
+          if [ "$FIXABLE" -gt 0 ]; then
+            echo "::warning::$FIXABLE fixable import sorting issues found"
+          fi
+
+  ruff-format:
+    name: Ruff Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install Ruff
+        run: uv pip install --system ruff
+
+      - name: Check formatting
+        run: ruff format --check . --diff
+
+  ty-check:
+    name: Type Check (ty)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install ty
+        run: uv pip install --system ty
+
+      - name: Run ty type checker
+        run: ty check
+
+  complexity:
+    name: Code Complexity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install Radon
+        run: uv pip install --system radon
+
+      - name: Cyclomatic complexity report
+        run: |
+          echo "=== Complexity Report ==="
+          radon cc semar/ -a -nc  # Average complexity, show only C and above
+          echo ""
+          echo "=== Maintainability Index ==="
+          radon mi semar/ -nc  # Show only C and below
+
+      - name: Check complexity thresholds
+        run: |
+          HIGH_COMPLEXITY=$(radon cc semar/ -j | python -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          count = sum(1 for file in data.values() 
+                     for block in file 
+                     if block.get('complexity', 0) > 10)
+          print(count)
+          ")
+          if [ "$HIGH_COMPLEXITY" -gt 0 ]; then
+            echo "::warning::$HIGH_COMPLEXITY functions exceed complexity threshold (>10)"
+          fi
+
+  dead-code:
+    name: Dead Code Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_DEFAULT }}
+
+      - name: Install Vulture
+        run: uv pip install --system vulture
+
+      - name: Detect dead code
+        run: |
+          vulture semar/ --min-confidence 80 || true
+          echo ""
+          echo "Note: Vulture reports are informational. High-confidence dead code should be reviewed."

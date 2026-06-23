@@ -1,0 +1,22 @@
+# Code Owners for SEMAR
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @sayedtenkanen
+
+# Core agents
+/semar/agents/ @sayedtenkanen
+/semar/agents/language_agents/ @sayedtenkanen
+
+# Configuration
+/semar/config/ @sayedtenkanen
+
+# Self-improvement system
+/semar/self_improvement/ @sayedtenkanen
+
+# CI/CD
+/.github/ @sayedtenkanen
+
+# Documentation
+/docs/ @sayedtenkanen
+*.md @sayedtenkanen

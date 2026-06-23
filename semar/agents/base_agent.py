@@ -7,16 +7,16 @@ Implements the 4-step self-improvement cycle:
 4. Update - Update instructions based on learnings
 """
 
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
 from enum import Enum
-import time
-import uuid
+from typing import Any, Dict, List, Optional
 
 
 class AgentState(Enum):
     """Agent execution states"""
+
     PLANNING = "planning"
     ACTION = "action"
     REVIEW = "review"
@@ -28,6 +28,7 @@ class AgentState(Enum):
 @dataclass
 class AgentContext:
     """Context for agent execution"""
+
     pr_url: str
     pr_diff: str
     pr_metadata: Dict[str, Any]
@@ -45,6 +46,7 @@ class AgentContext:
 @dataclass
 class AgentResult:
     """Result from agent execution"""
+
     review: str
     suggestions: List[Dict[str, Any]]
     metrics: Dict[str, float]
@@ -60,7 +62,7 @@ class AgentResult:
 
 class BaseAgent(ABC):
     """Abstract base class for SEMAR agents.
-    
+
     All agents must implement the 4-step cycle:
     - plan(): Analyze context and create execution plan
     - action(): Execute the review/improvement
@@ -70,7 +72,7 @@ class BaseAgent(ABC):
 
     def __init__(self, agent_id: str, language: Optional[str] = None):
         """Initialize the agent.
-        
+
         Args:
             agent_id: Unique identifier for this agent
             language: Programming language this agent handles (None for Judge)
@@ -93,10 +95,10 @@ class BaseAgent(ABC):
 
     async def execute_cycle(self, context: AgentContext) -> AgentResult:
         """Execute the 4-step self-improvement cycle.
-        
+
         Args:
             context: The context for this execution cycle
-            
+
         Returns:
             AgentResult with review, suggestions, metrics, and trajectory
         """
@@ -155,9 +157,8 @@ class BaseAgent(ABC):
             self._metrics["total_reviews"] += 1
             self._metrics["successful_reviews"] += 1
             self._metrics["avg_duration_ms"] = (
-                (self._metrics["avg_duration_ms"] * (self._metrics["total_reviews"] - 1) + duration_ms)
-                / self._metrics["total_reviews"]
-            )
+                self._metrics["avg_duration_ms"] * (self._metrics["total_reviews"] - 1) + duration_ms
+            ) / self._metrics["total_reviews"]
 
             # Store trajectory if available
             if self.trajectory_store:
@@ -179,7 +180,7 @@ class BaseAgent(ABC):
             duration_ms = (time.time() - start_time) * 1000
             self._metrics["total_reviews"] += 1
             self._metrics["failed_reviews"] += 1
-            
+
             error_result = AgentResult(
                 review=f"Error: {str(e)}",
                 suggestions=[],
@@ -192,17 +193,17 @@ class BaseAgent(ABC):
                 success=False,
                 error=str(e),
             )
-            
+
             self.state = AgentState.ERROR
             return error_result
 
     @abstractmethod
     async def plan(self, context: AgentContext) -> Dict[str, Any]:
         """Analyze PR and create execution plan.
-        
+
         Args:
             context: The context for this execution
-            
+
         Returns:
             Execution plan as a dictionary
         """
@@ -211,11 +212,11 @@ class BaseAgent(ABC):
     @abstractmethod
     async def action(self, context: AgentContext, plan: Dict[str, Any]) -> Any:
         """Execute the review/improvement.
-        
+
         Args:
             context: The context for this execution
             plan: The execution plan from plan()
-            
+
         Returns:
             Action result (type depends on agent implementation)
         """
@@ -224,11 +225,11 @@ class BaseAgent(ABC):
     @abstractmethod
     async def review(self, context: AgentContext, action_result: Any) -> AgentResult:
         """Self-reflect on results.
-        
+
         Args:
             context: The context for this execution
             action_result: The result from action()
-            
+
         Returns:
             AgentResult with review, suggestions, and metrics
         """
@@ -237,7 +238,7 @@ class BaseAgent(ABC):
     @abstractmethod
     async def update_instructions(self, context: AgentContext, review: AgentResult) -> None:
         """Update instructions based on learnings.
-        
+
         Args:
             context: The context for this execution
             review: The review result from review()
@@ -246,7 +247,7 @@ class BaseAgent(ABC):
 
     def get_capabilities(self) -> Dict[str, Any]:
         """Get agent capabilities.
-        
+
         Returns:
             Dictionary of agent capabilities
         """
@@ -264,7 +265,7 @@ class BaseAgent(ABC):
 
     async def health_ping(self) -> Dict[str, Any]:
         """Health check for agent registry.
-        
+
         Returns:
             Health status dictionary
         """
@@ -276,18 +277,24 @@ class BaseAgent(ABC):
             "timestamp": time.time(),
         }
 
-    def update_scaffold(self, prompts: Optional[Dict[str, str]] = None,
-                        skills: Optional[List[str]] = None,
-                        rules: Optional[List[str]] = None) -> None:
+    def update_scaffold(
+        self,
+        prompts: Optional[Dict[str, str]] = None,
+        skills: Optional[List[str]] = None,
+        rules: Optional[List[str]] = None,
+    ) -> None:
         """Update agent scaffold (evolvable components).
-        
+
         Args:
             prompts: Updated prompts
             skills: Updated skills list
             rules: Updated rules list
         """
         if prompts:
-            self._scaffold["prompts"].update(prompts)
+            current = self._scaffold.get("prompts", {})
+            if isinstance(current, dict):
+                current.update(prompts)
+                self._scaffold["prompts"] = current
         if skills:
             self._scaffold["skills"] = skills
         if rules:
@@ -295,7 +302,7 @@ class BaseAgent(ABC):
 
     def get_scaffold(self) -> Dict[str, Any]:
         """Get current scaffold.
-        
+
         Returns:
             Current scaffold dictionary
         """
