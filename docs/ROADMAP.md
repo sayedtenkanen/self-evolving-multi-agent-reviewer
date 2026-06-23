@@ -175,7 +175,7 @@ Build the system that evolves agent scaffolds.
 
 ---
 
-## Phase 5: Weight Updates (Weeks 9-10) — Next
+## Phase 5: Weight Updates (Weeks 9-10) — Done
 
 ### Goal
 
@@ -214,7 +214,7 @@ Implement RL training for model weight adaptation.
 
 ---
 
-## Phase 6: Integration & Polish (Weeks 11-12)
+## Phase 6: Integration & Polish (Weeks 11-12) — Next
 
 ### Goal
 
