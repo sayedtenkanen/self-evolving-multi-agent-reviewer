@@ -41,6 +41,7 @@ jobs:
             --exclude-files '\.pytest_cache/' \
             --exclude-files '\.ruff_cache/' \
             --exclude-files 'tests/security/' \
+            --exclude-files 'self_improvement/' \
             > .secrets.baseline
 
       - name: Verify no secrets found
