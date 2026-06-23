@@ -30,7 +30,7 @@
 | AgentRegistry | **Implemented** | `semar/semar/agents/registry.py` |
 | Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 4) |
 | Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
-| Harness Evolution | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
+| Harness Evolution | **Implemented** | `semar/semar/self_improvement/harness/` |
 | Weight Training (LoRA) | **Planned** | `semar/semar/self_improvement/` (Phase 5) |
 
 ## System Overview

@@ -1,6 +1,6 @@
 # SEMAR Implementation Plan
 
-> **Status**: Phases 0-2 are **implemented**. Code examples below may differ from actual code.
+> **Status**: Phases 0-4 are **implemented**. Code examples below may differ from actual code.
 > For accurate API reference, see the source files in `semar/semar/` and tests in `semar/tests/`.
 
 ## Phase 0: Repository Setup — Implemented
@@ -707,7 +707,7 @@ Review the code thoroughly and provide actionable suggestions."""
 
 ---
 
-## Phase 4: Harness Evolution — Next
+## Phase 4: Harness Evolution — Implemented
 
 ### PromptEvolver
 
@@ -948,7 +948,5 @@ async def get_metrics(agent: Optional[str] = None):
 
 ## Next Steps
 
-1. **Phase 3**: Implement BaseLanguageAgent and 7 language-specific agents
-2. **Phase 4**: Implement harness evolution (PromptEvolver, SkillDiscovery, RuleEvolver)
-3. **Phase 5**: Implement weight training (LoRA, RL algorithms)
-4. **Phase 6**: Implement CLI, GitHub bot, and monitoring
+1. **Phase 5**: Implement weight training (LoRA, RL algorithms)
+2. **Phase 6**: Implement CLI, GitHub bot, and monitoring

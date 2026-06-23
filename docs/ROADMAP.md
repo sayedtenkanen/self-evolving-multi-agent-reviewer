@@ -167,9 +167,9 @@ Build the system that evolves agent scaffolds.
 
 ### Milestone M4 (Week 8)
 
-- [ ] PromptEvolver can improve prompts
-- [ ] SkillDiscovery finds new patterns
-- [ ] RuleEvolver optimizes rules
+- [x] PromptEvolver can improve prompts
+- [x] SkillDiscovery finds new patterns
+- [x] RuleEvolver optimizes rules
 - [ ] A/B testing framework working
 - [ ] Performance tracking operational
 

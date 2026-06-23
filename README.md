@@ -49,8 +49,8 @@ See the [User Guide](docs/USER_GUIDE.md#quick-start) for a complete walkthrough.
 - **Phase 1**: BaseAgent, TrajectoryStore, Config, helpers ✅
 - **Phase 2**: Judge Agent, parallel dispatch, conflict resolution ✅
 - **Phase 3**: Language Agents, AgentRegistry ✅
-- **Phase 4**: Harness Evolution (next)
-- **Phase 5**: Weight Updates (planned)
+- **Phase 4**: Harness Evolution ✅
+- **Phase 5**: Weight Updates (next)
 - **Phase 6**: Integration & Polish (planned)
 
 ## License
