@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload coverage artifact
         if: matrix.python-version == env.PYTHON_DEFAULT
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-unit
           path: coverage-unit.xml
@@ -145,7 +145,7 @@ jobs:
           python -c "import semar; print(f'semar {semar.__version__} installed successfully')"
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
