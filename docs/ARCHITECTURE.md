@@ -19,15 +19,19 @@
 | RLAlgorithmSelector | **Implemented** | `semar/semar/agents/rl_algorithm_selector.py` |
 | TrajectoryStore (SQLite) | **Implemented** | `semar/semar/agents/trajectory_store.py` |
 | Config (dynaconf) | **Implemented** | `semar/semar/config/settings.py` |
-| AgentRegistry | **Planned** | `semar/semar/agents/` (Phase 3) |
-| BaseLanguageAgent | **Planned** | `semar/semar/agents/` (Phase 3) |
-| Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 3) |
+| BaseLanguageAgent | **Implemented** | `semar/semar/agents/language_agents/base_language.py` |
+| PythonAgent | **Implemented** | `semar/semar/agents/language_agents/python.py` |
+| JavaScriptAgent | **Implemented** | `semar/semar/agents/language_agents/javascript.py` |
+| TypeScriptAgent | **Implemented** | `semar/semar/agents/language_agents/typescript.py` |
+| GoAgent | **Implemented** | `semar/semar/agents/language_agents/go.py` |
+| JavaAgent | **Implemented** | `semar/semar/agents/language_agents/java.py` |
+| RustAgent | **Implemented** | `semar/semar/agents/language_agents/rust.py` |
+| CppAgent | **Implemented** | `semar/semar/agents/language_agents/cpp.py` |
+| AgentRegistry | **Implemented** | `semar/semar/agents/registry.py` |
+| Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 4) |
 | Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
 | Harness Evolution | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
 | Weight Training (LoRA) | **Planned** | `semar/semar/self_improvement/` (Phase 5) |
-| ConflictResolver (full) | **Planned** | `semar/semar/agents/` (Phase 3) |
-| ParallelDispatcher (circuit breaker) | **Planned** | `semar/semar/agents/` (Phase 3) |
-| LanguageDetector (wrapper) | **Planned** | `semar/semar/agents/` (Phase 3) |
 
 ## System Overview
 

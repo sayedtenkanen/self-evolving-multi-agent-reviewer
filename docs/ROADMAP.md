@@ -103,7 +103,7 @@ Build the orchestrator that analyzes trajectories and decides improvements.
 
 ---
 
-## Phase 3: Language Agents (Weeks 5-6) — Next
+## Phase 3: Language Agents (Weeks 5-6) — Done
 
 ### Goal
 
@@ -132,15 +132,15 @@ Implement language-specific agents with evolvable scaffolds.
 
 ### Milestone M3 (Week 6)
 
-- [ ] All 7 language agents implemented
-- [ ] AgentRegistry working
-- [ ] Agents can review sample PRs
-- [ ] Trajectories captured correctly
-- [ ] Unit tests passing
+- [x] All 7 language agents implemented
+- [x] AgentRegistry working
+- [x] Agents can review sample PRs
+- [x] Trajectories captured correctly
+- [x] Unit tests passing
 
 ---
 
-## Phase 4: Harness Evolution (Weeks 7-8)
+## Phase 4: Harness Evolution (Weeks 7-8) — Next
 
 ### Goal
 

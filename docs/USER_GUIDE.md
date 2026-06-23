@@ -234,10 +234,10 @@ export SEMAR_AGENT_TIMEOUT=300
 ## Running Tests
 
 ```bash
-# All tests (163)
+# All tests (207)
 pytest tests/ -v
 
-# Unit tests only
+# Unit tests only (122)
 pytest tests/unit/ -v
 
 # Security tests only
@@ -265,14 +265,24 @@ semar/
 │   │   ├── trajectory_analyzer.py # Failure mode detection
 │   │   ├── improvement_selector.py # Harness vs weight decisions
 │   │   ├── rl_algorithm_selector.py # Adaptive RL selection
-│   │   └── trajectory_store.py    # SQLite storage
+│   │   ├── trajectory_store.py    # SQLite storage
+│   │   ├── registry.py            # AgentRegistry
+│   │   └── language_agents/       # Language-specific agents
+│   │       ├── base_language.py   # BaseLanguageAgent
+│   │       ├── python.py          # PythonAgent
+│   │       ├── javascript.py      # JavaScriptAgent
+│   │       ├── typescript.py      # TypeScriptAgent
+│   │       ├── go.py              # GoAgent
+│   │       ├── java.py            # JavaAgent
+│   │       ├── rust.py            # RustAgent
+│   │       └── cpp.py             # CppAgent
 │   ├── config/
 │   │   ├── settings.py            # Dynaconf config
 │   │   └── default.toml           # Default values
 │   └── utils/
 │       └── helpers.py             # Utilities
 ├── tests/
-│   ├── unit/                      # 78 unit tests
+│   ├── unit/                      # 122 unit tests
 │   ├── security/                  # 85 security tests
 │   └── ...
 ├── docs/
@@ -290,10 +300,10 @@ semar/
 | 0 | Done | Package structure, config, tooling |
 | 1 | Done | BaseAgent, TrajectoryStore, helpers |
 | 2 | Done | Judge Agent, parallel dispatch, conflict resolution |
-| 3 | Next | Self-improvement engine (harness + weight updates) |
-| 4 | Planned | Org-level cross-repo learning |
-| 5 | Planned | PR-Agent integration, GitHub bot |
-| 6 | Planned | Dashboard, monitoring, production readiness |
+| 3 | Done | Language Agents, AgentRegistry |
+| 4 | Next | Harness evolution (harness + weight updates) |
+| 5 | Planned | Org-level cross-repo learning |
+| 6 | Planned | PR-Agent integration, GitHub bot |
 
 ## License
 

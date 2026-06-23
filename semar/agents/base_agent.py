@@ -281,7 +281,7 @@ class BaseAgent(ABC):
         self,
         prompts: Optional[Dict[str, str]] = None,
         skills: Optional[List[str]] = None,
-        rules: Optional[List[str]] = None,
+        rules: Optional[List[Any]] = None,
     ) -> None:
         """Update agent scaffold (evolvable components).
 
