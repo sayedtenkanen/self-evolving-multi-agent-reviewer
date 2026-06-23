@@ -6,8 +6,10 @@ SEMAR (Self-Evolving Multi-Agent Reviewer) v0.1.0
 
 SEMAR is a self-improving code review system. It orchestrates multiple language-specific AI agents to review pull requests, detects its own failures, and learns from mistakes over time.
 
-**Current capabilities (Phase 2):**
+**Current capabilities (Phase 3):**
 - Detects 13 programming languages from PR diffs
+- 7 language-specific agents: Python, JS, TS, Go, Java, Rust, C++
+- AgentRegistry with health checks, smart selection, performance tracking
 - Dispatches reviews to language agents in parallel
 - Resolves conflicts between agents via majority voting
 - Analyzes execution trajectories for failure modes

@@ -96,19 +96,25 @@ The Judge Agent is a **single class** that handles two distinct roles from the S
 - `_improve_harness()` - Trigger scaffold evolution
 - `_train_weights()` - Trigger RL training
 
-### Language Agents — Planned (Phase 3)
+### Language Agents — Implemented
 
 Each language agent is specialized for a specific programming language:
 - Python, JavaScript, TypeScript, Go, Java, Rust, C++
 
 **Base Class**: `BaseLanguageAgent`
 - Inherits from `BaseAgent`
-- Has evolvable scaffold (prompts, skills, rules)
+- Has evolvable scaffold (system prompt, skills, rules)
 - Captures full execution trajectories
 - Implements 4-step cycle
-- **Must implement `health_ping()`**: Returns health status for agent registry
 
-**Agent Registry**: Discovers, manages, and health-checks language agents:
+**Language-Specific Agents**:
+- `PythonAgent` - PEP 8, type hints, eval/exec detection
+- `JavaScriptAgent` - XSS, eval, innerHTML detection
+- `TypeScriptAgent` - `any` type, strict mode
+- `GoAgent` - concurrency, error handling, goroutine patterns
+- `JavaAgent` - OOP, raw types
+- `RustAgent` - ownership, unsafe, clone
+- `CppAgent` - raw new/delete, sprintf
 
 ```python
 import asyncio
@@ -492,7 +498,7 @@ class LanguageDetector:
 - **Ambiguous file handling**: Files matching multiple languages are flagged for review
 - **Excluded files**: Binary, compiled, and generated files are filtered out
 
-### Inter-Agent Communication Protocol — Planned (Phase 3)
+### Inter-Agent Communication Protocol — Planned (Phase 4)
 
 Agents communicate during review to share findings, request context, and resolve conflicts:
 
@@ -1871,15 +1877,15 @@ semar/
 │   ├── language_detection.py  # Multi-strategy detection with confidence scoring
 │   └── language_agents/
 │       ├── __init__.py
-│       ├── base_language_agent.py
-│       ├── python_agent.py
-│       ├── javascript_agent.py
-│       ├── typescript_agent.py
-│       ├── go_agent.py
-│       ├── java_agent.py
-│       ├── rust_agent.py
-│       ├── cpp_agent.py
-│       └── registry.py        # Health checks, capabilities, dynamic registration
+│       ├── base_language.py
+│       ├── python.py
+│       ├── javascript.py
+│       ├── typescript.py
+│       ├── go.py
+│       ├── java.py
+│       ├── rust.py
+│       ├── cpp.py
+│       └── registry.py        # Health checks, smart selection, performance tracking
 ├── self_improvement/
 │   ├── __init__.py
 │   ├── harness/

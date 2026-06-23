@@ -144,7 +144,7 @@ Implement language-specific agents with evolvable scaffolds.
 
 ### Goal
 
-Build the system that evolves agent scaffolds.
+Build the system that evolves agent scaffolds (prompts, skills, rules).
 
 ### Tasks
 
