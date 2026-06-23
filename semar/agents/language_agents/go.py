@@ -29,5 +29,5 @@ class GoAgent(BaseLanguageAgent):
     def _get_default_rules(self) -> List[Dict[str, Any]]:
         return [
             {"name": "no_unchecked_errors", "pattern": r"_\s*=\s*\w+\(", "severity": "medium"},
-            {"name": "no裸goroutine", "pattern": r"\bgo\s+\w+\(", "severity": "low"},
+            {"name": "no_raw_goroutine", "pattern": r"\bgo\s+\w+\(", "severity": "low"},
         ]

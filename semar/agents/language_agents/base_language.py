@@ -40,7 +40,7 @@ class BaseLanguageAgent(BaseAgent):
         """Get default skills. Override in subclass."""
         return ["security_review"]
 
-    def _get_default_rules(self) -> List[Dict[str, Any]]:
+    def _get_default_rules(self) -> List[Any]:
         """Get default rules. Override in subclass."""
         return []
 
@@ -48,7 +48,7 @@ class BaseLanguageAgent(BaseAgent):
         self,
         prompts: Optional[Dict[str, str]] = None,
         skills: Optional[List[str]] = None,
-        rules: Optional[List[Dict[str, Any]]] = None,
+        rules: Optional[List[Any]] = None,
     ) -> None:
         """Update agent scaffold.
 
