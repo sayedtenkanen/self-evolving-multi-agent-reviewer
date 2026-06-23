@@ -28,8 +28,8 @@
 | RustAgent | **Implemented** | `semar/semar/agents/language_agents/rust.py` |
 | CppAgent | **Implemented** | `semar/semar/agents/language_agents/cpp.py` |
 | AgentRegistry | **Implemented** | `semar/semar/agents/registry.py` |
-| Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 4) |
-| Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 4) |
+| Inter-Agent Communication | **Planned** | `semar/semar/agents/` (Phase 6) |
+| Cross-Agent Learning | **Planned** | `semar/semar/self_improvement/` (Phase 6) |
 | Harness Evolution | **Implemented** | `semar/semar/self_improvement/harness/` |
 | Weight Training (LoRA) | **Implemented** | `semar/semar/self_improvement/weight_training/` |
 
@@ -1064,9 +1064,9 @@ class ParallelDispatcher:
 - Prevents resource exhaustion when reviewing large PRs
 - Configurable based on system capacity
 
-### Self-Improvement Engine — Partially Implemented
+### Self-Improvement Engine — Implemented
 
-#### Harness Evolution — Planned (Phase 4)
+#### Harness Evolution — Implemented
 
 - **PromptEvolver**: Improves agent prompts based on failure analysis
 - **SkillDiscovery**: Finds new analysis patterns from trajectories
@@ -1079,7 +1079,7 @@ class ParallelDispatcher:
 - **Data Pipeline**: Collects training data from trajectories (TrajectoryStore is implemented)
 - **Reward Signals**: Outcome-based, human feedback, cross-agent
 
-#### Cross-Agent Learning — Planned (Phase 4)
+#### Cross-Agent Learning — Planned (Phase 6)
 
 Agents share knowledge across languages using a full similarity matrix, semantic adaptation, and transfer validation:
 
