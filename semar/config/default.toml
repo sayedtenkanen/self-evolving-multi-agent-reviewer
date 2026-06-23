@@ -1,0 +1,55 @@
+# SEMAR Default Configuration
+
+[app]
+name = "SEMAR"
+version = "0.1.0"
+debug = false
+
+[llm]
+model = "gpt-4"
+temperature = 0.7
+max_tokens = 4096
+# api_key = "set via SEMAR_LLM_API_KEY environment variable"
+
+[agent]
+timeout = 300
+max_concurrent_agents = 5
+memory_size = 1000
+
+[trajectory]
+db_path = "semar_trajectories.db"
+retention_days = 30
+
+[self_improvement]
+harness_update_interval = 10
+weight_update_interval = 50
+stall_detection_window = 5
+stall_detection_threshold = 0.01
+
+[learning]
+decay_rate = 0.1
+min_relevance = 0.1
+
+[rollback]
+threshold = 0.1
+
+[conflict_resolution]
+credibility_decay_rate = 0.01
+
+[dispatch]
+per_agent_timeout = 300
+circuit_breaker_threshold = 3
+circuit_breaker_recovery_timeout = 60
+
+[language_detection]
+min_files_for_dispatch = 1
+max_cache_size = 100
+
+[organization]
+org_id = "default"
+max_learnings = 1000
+relevance_threshold = 0.7
+
+[logging]
+level = "INFO"
+file = "semar.log"
