@@ -53,15 +53,16 @@ class BaseLanguageAgent(BaseAgent):
         """Update agent scaffold.
 
         Args:
-            prompts: Updated prompts (keys: system_prompt, etc.)
+            prompts: Updated prompts (any key stored in scaffold["prompts"])
             skills: Updated skills list
             rules: Updated rules list
         """
         scaffold = cast(Dict[str, Any], self._scaffold)
         if prompts:
-            val = prompts.get("system_prompt")
-            if val is not None:
-                scaffold["system_prompt"] = val
+            scaffold.setdefault("prompts", {}).update(prompts)
+            # Also set system_prompt if provided for backward compatibility
+            if "system_prompt" in prompts:
+                scaffold["system_prompt"] = prompts["system_prompt"]
         if skills is not None:
             scaffold["skills"] = skills
         if rules is not None:
