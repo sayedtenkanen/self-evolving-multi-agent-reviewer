@@ -33,9 +33,9 @@ async def test_decide_returns_harness_when_failures_present(selector, analysis_w
 
 
 @pytest.mark.asyncio
-async def test_decide_returns_harness_when_no_failures(selector, analysis_healthy):
+async def test_decide_returns_none_when_healthy(selector, analysis_healthy):
     result = await selector.decide(analysis_healthy)
-    assert result == ImprovementType.HARNESS
+    assert result == ImprovementType.NONE
 
 
 @pytest.mark.asyncio
@@ -58,6 +58,17 @@ async def test_stall_counter_increments(selector):
     await selector.decide(stalled_analysis)
     await selector.decide(stalled_analysis)
     assert selector.consecutive_no_improvement == 2
+
+
+@pytest.mark.asyncio
+async def test_decide_returns_none_when_not_stalled(selector):
+    analysis = {
+        "metrics": {"accuracy": 0.8, "improvement": 0.0},
+        "failure_modes": [],
+    }
+    result = await selector.decide(analysis)
+    assert result == ImprovementType.NONE
+    assert selector.consecutive_no_improvement == 1
 
 
 @pytest.mark.asyncio

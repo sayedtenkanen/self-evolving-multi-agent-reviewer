@@ -213,8 +213,8 @@ class JudgeAgent(BaseAgent):
 
         votes = {}
         for _lang, result in results.items():
-            review = result.review.lower() if result.review else "approve"
-            if "approve" in review:
+            review = result.review.strip().lower() if result.review else "approve"
+            if review == "approve" or review == "approved":
                 votes["approve"] = votes.get("approve", 0) + 1
             else:
                 votes["request_changes"] = votes.get("request_changes", 0) + 1

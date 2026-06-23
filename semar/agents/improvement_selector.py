@@ -59,4 +59,5 @@ class ImprovementSelector:
         if self.consecutive_no_improvement >= self.stall_threshold:
             return ImprovementType.WEIGHT
 
-        return ImprovementType.HARNESS
+        # Steady improvement - no update needed
+        return ImprovementType.NONE

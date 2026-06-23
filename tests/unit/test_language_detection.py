@@ -84,3 +84,13 @@ def test_stall_detection(judge):
 def test_stall_detection_no_stall(judge):
     result = judge._check_stall({"improvement": 0.1, "accuracy": 0.6})
     assert result is False
+
+
+def test_stall_detection_high_accuracy_no_improvement(judge):
+    result = judge._check_stall({"improvement": 0.0, "accuracy": 0.8})
+    assert result is False
+
+
+def test_stall_detection_low_accuracy_no_improvement(judge):
+    result = judge._check_stall({"improvement": 0.0, "accuracy": 0.5})
+    assert result is True

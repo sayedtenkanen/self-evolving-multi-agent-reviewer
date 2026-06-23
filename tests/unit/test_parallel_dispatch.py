@@ -147,3 +147,9 @@ def test_aggregate_results_merges_suggestions(judge_with_agents):
     merged = judge_with_agents._aggregate_results(results)
     assert "results" in merged
     assert len(merged["results"]) == 2
+    assert merged["total_suggestions"] == 2
+    assert len(merged["suggestions"]) == 2
+    assert merged["suggestions"][0] == {"line": 1, "comment": "fix type hint"}
+    assert merged["suggestions"][1] == {"line": 5, "comment": "use const"}
+    assert merged["metrics_by_language"]["python"]["accuracy"] == 0.9
+    assert merged["metrics_by_language"]["javascript"]["accuracy"] == 0.85

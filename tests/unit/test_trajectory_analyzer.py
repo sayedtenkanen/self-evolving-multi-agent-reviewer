@@ -97,3 +97,51 @@ class TestFailureMode:
         assert fm.type == "missed_issue"
         assert fm.severity == "high"
         assert fm.frequency == 1
+
+
+@pytest.mark.asyncio
+async def test_detect_hallucination(analyzer):
+    trajectory = {
+        "steps": {
+            "action": {"output": {"hallucinated": True, "file": "nonexistent.py"}},
+        },
+        "metrics": {},
+    }
+    result = await analyzer.analyze(trajectory)
+    failures = result["failure_modes"]
+    hallucinations = [f for f in failures if f.type == "hallucination"]
+    assert len(hallucinations) == 1
+    assert hallucinations[0].severity == "high"
+
+
+@pytest.mark.asyncio
+async def test_detect_overconfident(analyzer):
+    trajectory = {
+        "steps": {},
+        "metrics": {"confidence": 0.95, "accuracy": 0.5},
+    }
+    result = await analyzer.analyze(trajectory)
+    failures = result["failure_modes"]
+    overconfident = [f for f in failures if f.type == "overconfident"]
+    assert len(overconfident) == 1
+    assert overconfident[0].severity == "medium"
+
+
+@pytest.mark.asyncio
+async def test_truncation_of_examples(analyzer):
+    trajectory = {
+        "steps": {},
+        "metrics": {},
+        "human_follow_up": [{"issue": f"missed {i}"} for i in range(10)],
+        "rejected_suggestions": [{"suggestion": f"sugg {i}"} for i in range(10)],
+    }
+    result = await analyzer.analyze(trajectory)
+    failures = result["failure_modes"]
+    missed = [f for f in failures if f.type == "missed_issue"]
+    false_pos = [f for f in failures if f.type == "false_positive"]
+    assert len(missed) == 1
+    assert missed[0].frequency == 10
+    assert len(missed[0].examples) == 5
+    assert len(false_pos) == 1
+    assert false_pos[0].frequency == 10
+    assert len(false_pos[0].examples) == 5
