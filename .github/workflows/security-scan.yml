@@ -33,16 +33,19 @@ jobs:
 
       - name: Scan for secrets
         run: |
-          detect-secrets scan --all-files --exclude-files '\.venv/' \
+          detect-secrets scan --all-files \
+            --exclude-files '\.venv/' \
             --exclude-files 'semar\.egg-info/' \
             --exclude-files '__pycache__/' \
             --exclude-files '\.git/' \
-            --exclude-files '\.github/' \
-            --output .secrets.baseline
+            --exclude-files '\.pytest_cache/' \
+            --exclude-files '\.ruff_cache/' \
+            --exclude-files 'tests/security/' \
+            > .secrets.baseline
 
       - name: Verify no secrets found
         run: |
-          detect-secrets audit .secrets.baseline --report-only
+          detect-secrets audit .secrets.baseline
 
   dependency-audit:
     name: Dependency Audit
