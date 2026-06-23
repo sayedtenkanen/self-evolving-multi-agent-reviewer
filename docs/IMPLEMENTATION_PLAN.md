@@ -601,7 +601,7 @@ class RLAlgorithmSelector:
 
 ---
 
-## Phase 3: Language Agents — Next
+## Phase 3: Language Agents — Implemented
 
 ### BaseLanguageAgent
 
@@ -707,7 +707,7 @@ Review the code thoroughly and provide actionable suggestions."""
 
 ---
 
-## Phase 4: Harness Evolution — Planned
+## Phase 4: Harness Evolution — Next
 
 ### PromptEvolver
 
